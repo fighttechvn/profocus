@@ -111,6 +111,10 @@ Integrating the shared FightTech libraries into a whole app? See [`AGENTS.md`](A
 - **Don't change port 8080** — the app expects it.
 - **LAN-only, no auth** — keep it on your home WiFi; never expose port 8080 to the internet.
 
+## Build it with an AI agent
+New to hardware? Copy the prompt in [`AI-PROMPT.md`](AI-PROMPT.md) into Claude / ChatGPT / Cursor
+and it will pick your parts, give wiring, walk you through flashing, and debug — in any language.
+
 ## PDF guide
 Step-by-step install & usage (hardware, wiring, flashing, sending from the app):
 [English](docs/ProFocus-Frame-SDK-Guide-en.pdf) · [Tiếng Việt](docs/ProFocus-Frame-SDK-Guide-vi.pdf).
