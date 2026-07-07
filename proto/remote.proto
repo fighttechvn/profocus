@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package profocus.remote;
+
+option java_package = "vn.fighttech.locktimer.remote.proto";
+option java_multiple_files = true;
+option java_outer_classname = "RemoteProto";
+option swift_prefix = "Pb";
+
+// EP14 — protocol điều khiển từ xa (Device A → Device B), DÙNG CHUNG Android ↔ iOS.
+//
+// ⚠️ WIRE FORMAT: trên dây vẫn dùng **JSON legacy** (int64 là JSON number, và
+// RemoteState LUÔN in đủ mọi field) để tương thích các app đã phát hành. KHÔNG dùng
+// protobuf canonical JSON (nó mã hoá int64 thành string + bỏ field mặc định → vỡ
+// app cũ). File .proto này là NGUỒN SỰ THẬT của schema; mỗi platform bọc type sinh
+// ra ở đây và tự bridge JSON đúng wire cũ (xem RemoteProtocol.swift / RemoteCommand.java).
+
+// Lệnh điều khiển. Wire: {"cmd":"...","ms":<number>,"style":"...","hex":"#RRGGBB"}
+// (chỉ kèm field liên quan tới cmd).
+message RemoteCommand {
+  string cmd = 1;    // timer.setDuration | timer.startPause | timer.reset |
+                     // clock.setStyle | clock.setAccent | frame.* | receive.open
+  int64  ms = 2;     // timer.setDuration (mili giây, > 0)
+  string style = 3;  // clock.setStyle: "flip" | "circle" | "analog"
+  string hex = 4;    // clock.setAccent: "#RRGGBB"
+}
+
+// Trạng thái phát cho remote. Wire: in ĐỦ mọi field.
+message RemoteState {
+  string screen = 1;    // "timer" | "frame" | "receive"
+  int64  remaining = 2; // mili giây còn lại
+  int64  total = 3;     // mili giây tổng
+  bool   running = 4;
+  bool   armed = 5;
+  string style = 6;
+}

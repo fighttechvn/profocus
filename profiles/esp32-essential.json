@@ -1,0 +1,29 @@
+{
+  "id": "esp32-essential",
+  "tier": 1,
+  "label": "ESP32 + ILI9341, no SD (cheapest WiFi)",
+  "recommended": false,
+  "profileKey": "PROFILE_B",
+  "config": { "FRAME_PROFILE": "PROFILE_B", "USE_SD": 0 },
+  "mcu": "ESP32 WROOM-32 (4MB)",
+  "display": "2.4\"/2.8\" ILI9341 SPI TFT",
+  "resolution": "320x240",
+  "round": false,
+  "wifi": true,
+  "receiveFromPhone": true,
+  "storage": ["SPIFFS (~10 photos)"],
+  "approxCostUsd": 10,
+  "libraries": ["TFT_eSPI", "TJpg_Decoder", "QRCode", "ESP32 core"],
+  "wiring": [
+    { "tft": "VCC", "mcu": "3V3" },
+    { "tft": "GND", "mcu": "GND" },
+    { "tft": "CS", "mcu": "GPIO5" },
+    { "tft": "RESET", "mcu": "GPIO4" },
+    { "tft": "DC/RS", "mcu": "GPIO2" },
+    { "tft": "SDI/MOSI", "mcu": "GPIO23" },
+    { "tft": "SCK", "mcu": "GPIO18" },
+    { "tft": "SDO/MISO", "mcu": "GPIO19" },
+    { "tft": "LED/BL", "mcu": "3V3 or GPIO32 (PWM)" }
+  ],
+  "note": "Bậc rẻ nhất vẫn nhận ảnh WiFi. Không thẻ SD — lưu vào SPIFFS nên giữ được ít ảnh."
+}

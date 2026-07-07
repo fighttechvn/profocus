@@ -1,0 +1,26 @@
+{
+  "id": "esp32-round-gc9a01",
+  "tier": 3,
+  "label": "ESP32 + GC9A01 round (clock frame)",
+  "recommended": false,
+  "profileKey": "PROFILE_C",
+  "mcu": "ESP32 WROOM-32 (4MB)",
+  "display": "1.28\" GC9A01 round SPI TFT",
+  "resolution": "240x240",
+  "round": true,
+  "wifi": true,
+  "receiveFromPhone": true,
+  "storage": ["SPIFFS"],
+  "approxCostUsd": 11,
+  "libraries": ["TFT_eSPI (GC9A01_DRIVER)", "TJpg_Decoder", "QRCode", "ESP32 core"],
+  "wiring": [
+    { "tft": "VCC", "mcu": "3V3" },
+    { "tft": "GND", "mcu": "GND" },
+    { "tft": "CS", "mcu": "GPIO5" },
+    { "tft": "RESET", "mcu": "GPIO4" },
+    { "tft": "DC", "mcu": "GPIO2" },
+    { "tft": "MOSI/SDA", "mcu": "GPIO23" },
+    { "tft": "SCK/SCL", "mcu": "GPIO18" },
+    { "tft": "BL", "mcu": "3V3" }
+  ]
+}

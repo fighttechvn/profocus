@@ -1,0 +1,28 @@
+{
+  "id": "esp32s3-ili9488",
+  "tier": 4,
+  "label": "ESP32-S3 + ILI9488 (big frame)",
+  "recommended": false,
+  "profileKey": "PROFILE_D",
+  "mcu": "ESP32-S3 DevKitC (PSRAM 8MB)",
+  "display": "3.5\"/4.0\" ILI9488 SPI TFT",
+  "resolution": "480x320",
+  "round": false,
+  "wifi": true,
+  "receiveFromPhone": true,
+  "storage": ["microSD", "SPIFFS"],
+  "approxCostUsd": 18,
+  "libraries": ["TFT_eSPI (ILI9488_DRIVER)", "TJpg_Decoder", "QRCode", "ESP32 core", "SD"],
+  "wiring": [
+    { "tft": "VCC", "mcu": "3V3" },
+    { "tft": "GND", "mcu": "GND" },
+    { "tft": "CS", "mcu": "GPIO10" },
+    { "tft": "RESET", "mcu": "GPIO9" },
+    { "tft": "DC", "mcu": "GPIO14" },
+    { "tft": "MOSI", "mcu": "GPIO11" },
+    { "tft": "SCK", "mcu": "GPIO12" },
+    { "tft": "MISO", "mcu": "GPIO13" },
+    { "tft": "LED/BL", "mcu": "3V3" },
+    { "tft": "SD_CS", "mcu": "GPIO21" }
+  ]
+}

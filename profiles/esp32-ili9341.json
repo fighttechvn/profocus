@@ -1,0 +1,28 @@
+{
+  "id": "esp32-ili9341",
+  "tier": 2,
+  "label": "ESP32 + ILI9341 (WiFi frame)",
+  "recommended": true,
+  "profileKey": "PROFILE_B",
+  "mcu": "ESP32 WROOM-32 (4MB)",
+  "display": "2.8\"/3.5\" ILI9341 SPI TFT",
+  "resolution": "320x240",
+  "round": false,
+  "wifi": true,
+  "receiveFromPhone": true,
+  "storage": ["microSD (optional)", "SPIFFS"],
+  "approxCostUsd": 12,
+  "libraries": ["TFT_eSPI", "TJpg_Decoder", "QRCode", "ESP32 core (WiFi/SD/SPIFFS/ESPmDNS)"],
+  "wiring": [
+    { "tft": "VCC", "mcu": "3V3" },
+    { "tft": "GND", "mcu": "GND" },
+    { "tft": "CS", "mcu": "GPIO5" },
+    { "tft": "RESET", "mcu": "GPIO4" },
+    { "tft": "DC/RS", "mcu": "GPIO2" },
+    { "tft": "SDI/MOSI", "mcu": "GPIO23" },
+    { "tft": "SCK", "mcu": "GPIO18" },
+    { "tft": "SDO/MISO", "mcu": "GPIO19" },
+    { "tft": "LED/BL", "mcu": "3V3 or GPIO32 (PWM)" },
+    { "tft": "SD_CS (if present)", "mcu": "GPIO15" }
+  ]
+}

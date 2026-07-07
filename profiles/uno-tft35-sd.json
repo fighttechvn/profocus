@@ -1,0 +1,23 @@
+{
+  "id": "uno-tft35-sd",
+  "tier": 0,
+  "label": "Arduino Uno + 3.5\" TFT + SD (offline)",
+  "recommended": false,
+  "profileKey": "ARDUINO_UNO",
+  "mcu": "Arduino Uno R3",
+  "display": "3.5\" ILI9486/HX8357 parallel 8-bit shield",
+  "resolution": "480x320",
+  "round": false,
+  "wifi": false,
+  "receiveFromPhone": false,
+  "storage": ["microSD (on shield)"],
+  "approxCostUsd": 8,
+  "libraries": ["MCUFRIEND_kbv", "Adafruit_GFX", "SD"],
+  "wiring": [
+    { "tft": "TFT shield", "mcu": "cắm thẳng lên Uno — không cần dây" },
+    { "tft": "LCD data", "mcu": "D2..D9" },
+    { "tft": "LCD control", "mcu": "A0..A4" },
+    { "tft": "SD_CS", "mcu": "D10" }
+  ],
+  "note": "Không WiFi — chép BMP 24-bit vào SD bằng máy tính. Bản nhập môn bám sát video gốc."
+}

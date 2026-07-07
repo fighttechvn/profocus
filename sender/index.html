@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ProFocus Frame — Sender</title>
+<!--
+  Trang gửi ảnh tham chiếu cho khung ảnh phần cứng ProFocus.
+  Resize ảnh trước khi gửi (nhẹ, hiện tức thì) rồi POST /upload đúng ProFocus Frame Protocol.
+  MỞ TRỰC TIẾP file này (file://) hoặc qua http — trình duyệt chặn https→http (mixed content)
+  nên KHÔNG mở bản trên trang https rồi gửi tới http://IP:8080.
+-->
+<style>
+  :root{--bg:#0E0E10;--card:#161618;--line:#28282C;--coral:#E55846;--ink:#F5F6F8;--soft:#9CA3AF}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;padding:22px;max-width:560px;margin:0 auto}
+  h1{font-size:22px;margin-bottom:4px}
+  p.sub{color:var(--soft);font-size:14px;margin-bottom:18px}
+  label{display:block;font-size:13px;color:var(--soft);margin:14px 0 6px}
+  input[type=text]{width:100%;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:16px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  button{flex:1;min-width:90px;padding:12px 14px;border:2px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:15px;font-weight:600;cursor:pointer}
+  button.primary{background:var(--coral);border-color:var(--coral);color:#fff}
+  button:active{transform:translateY(1px)}
+  #log{margin-top:16px;font-size:14px;color:var(--soft);white-space:pre-wrap}
+  .file{margin-top:14px}
+  .max{margin-top:10px;font-size:13px;color:var(--soft)}
+</style>
+</head>
+<body>
+  <h1>📷 ProFocus Frame — Sender</h1>
+  <p class="sub">Gửi ảnh sang khung ảnh phần cứng qua WiFi cùng mạng. Ảnh được resize cho nhẹ.</p>
+
+  <label for="ip">Địa chỉ khung (IP hiện trên màn khung)</label>
+  <input id="ip" type="text" inputmode="decimal" placeholder="192.168.1.42" />
+
+  <div class="file">
+    <label for="files">Chọn ảnh để gửi</label>
+    <input id="files" type="file" accept="image/*" multiple />
+  </div>
+  <div class="max">Chiều rộng tối đa khi gửi:
+    <select id="maxw">
+      <option value="320">320 (màn nhỏ)</option>
+      <option value="480" selected>480 (khuyên dùng)</option>
+      <option value="800">800 (màn lớn)</option>
+      <option value="0">Gửi nguyên gốc</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <button class="primary" id="send">Gửi ảnh ▶</button>
+  </div>
+  <div class="row">
+    <button data-cmd="frame.prev">⏮ Trước</button>
+    <button data-cmd="frame.pause">⏯ Pause</button>
+    <button data-cmd="frame.next">Kế ⏭</button>
+  </div>
+
+  <div id="log"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const log = m => { $('#log').textContent = m; };
+const ipEl = $('#ip');
+ipEl.value = localStorage.getItem('frameIp') || '';
+ipEl.addEventListener('change', () => localStorage.setItem('frameIp', ipEl.value.trim()));
+
+function base() {
+  let ip = ipEl.value.trim();
+  if (!ip) { log('Nhập IP của khung trước.'); throw new Error('no ip'); }
+  if (!/:\d+$/.test(ip)) ip += ':8080';
+  return 'http://' + ip;
+}
+
+// Resize ảnh về maxW (giữ tỉ lệ), xuất JPEG blob. maxW=0 → giữ nguyên file gốc.
+function prepare(file, maxW) {
+  return new Promise((resolve, reject) => {
+    if (!maxW) return resolve(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxW / img.width);
+      const w = Math.round(img.width * scale), h = Math.round(img.height * scale);
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      cv.getContext('2d').drawImage(img, 0, 0, w, h);
+      cv.toBlob(b => resolve(b), 'image/jpeg', 0.85);
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+$('#send').addEventListener('click', async () => {
+  const files = $('#files').files;
+  if (!files.length) { log('Chọn ít nhất 1 ảnh.'); return; }
+  const maxW = parseInt($('#maxw').value, 10);
+  let b;
+  try { b = base(); } catch { return; }
+  for (let i = 0; i < files.length; i++) {
+    const f = files[i];
+    log(`Đang gửi ${i + 1}/${files.length}: ${f.name} …`);
+    try {
+      const blob = await prepare(f, maxW);
+      const res = await fetch(b + '/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'image/jpeg', 'X-Filename': encodeURIComponent(f.name.replace(/\.\w+$/, '.jpg')) },
+        body: blob
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+    } catch (e) {
+      log(`Lỗi ở ${f.name}: ${e.message}\nKiểm tra IP + cùng WiFi. (https→http bị chặn — mở file này trực tiếp.)`);
+      return;
+    }
+  }
+  log(`Xong ✓ Đã gửi ${files.length} ảnh.`);
+});
+
+document.querySelectorAll('[data-cmd]').forEach(btn => btn.addEventListener('click', async () => {
+  let b; try { b = base(); } catch { return; }
+  try {
+    await fetch(b + '/cmd', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ cmd: btn.dataset.cmd }) });
+    log('Đã gửi lệnh: ' + btn.dataset.cmd);
+  } catch (e) { log('Lỗi lệnh: ' + e.message); }
+}));
+</script>
+</body>
+</html>
